@@ -8,17 +8,19 @@ import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 
 void main() {
-  return runApp(GoogleSheetData());
+  return runApp(const GoogleSheetData());
 }
 
 class GoogleSheetData extends StatefulWidget {
+  const GoogleSheetData({super.key});
+
   @override
   LoadDataFromGoogleSheetState createState() => LoadDataFromGoogleSheetState();
 }
 
 class LoadDataFromGoogleSheetState extends State<GoogleSheetData> {
   MeetingDataSource? events;
-  List<Color> _colorCollection = <Color>[];
+  final List<Color> _colorCollection = <Color>[];
 
   @override
   void initState() {
@@ -33,29 +35,29 @@ class LoadDataFromGoogleSheetState extends State<GoogleSheetData> {
       home: Scaffold(
           body: SafeArea(
               child: Container(
-        child: FutureBuilder(
-          future: getDataFromGoogleSheet(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.data != null) {
-              return SafeArea(
-                  child: Container(
-                child: SfCalendar(
-                  view: CalendarView.month,
-                  monthViewSettings: MonthViewSettings(showAgenda: true),
-                  dataSource: MeetingDataSource(snapshot.data),
-                  initialDisplayDate: snapshot.data[0].from,
+                child: FutureBuilder(
+                  future: getDataFromGoogleSheet(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.data != null) {
+                      return SafeArea(
+                          child: Container(
+                            child: SfCalendar(
+                              view: CalendarView.month,
+                              monthViewSettings: const MonthViewSettings(showAgenda: true),
+                              dataSource: MeetingDataSource(snapshot.data),
+                              initialDisplayDate: snapshot.data[0].from,
+                            ),
+                          ));
+                    } else {
+                      return Container(
+                        child: const Center(
+                          child: Text('Loading.....'),
+                        ),
+                      );
+                    }
+                  },
                 ),
-              ));
-            } else {
-              return Container(
-                child: Center(
-                  child: Text('Loading.....'),
-                ),
-              );
-            }
-          },
-        ),
-      ))),
+              ))),
     );
   }
 
@@ -79,7 +81,7 @@ class LoadDataFromGoogleSheetState extends State<GoogleSheetData> {
     );
     dynamic jsonAppData = convert.jsonDecode(data.body);
     final List<Meeting> appointmentData = [];
-    final Random random = new Random();
+    final Random random = Random();
     for (dynamic data in jsonAppData) {
       Meeting meetingData = Meeting(
         eventName: data['subject'],
@@ -126,10 +128,10 @@ class MeetingDataSource extends CalendarDataSource {
 class Meeting {
   Meeting(
       {this.eventName = '',
-      required this.from,
-      required this.to,
-      this.background,
-      this.isAllDay = false});
+        required this.from,
+        required this.to,
+        this.background,
+        this.isAllDay = false});
 
   String? eventName;
   DateTime? from;
