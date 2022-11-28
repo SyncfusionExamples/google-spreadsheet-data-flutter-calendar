@@ -11,58 +11,9 @@ Create a new google spreadsheet using this [link](https://www.google.com/sheets/
 
 Create the async method getDataFromGoogleSheet() and use the http.get() method to retrieve the data from the URL in the AppScript API connection
 
-```
- Future<List<Meeting>> getDataFromGoogleSheet() async {
-    Response data = await http.get(
-      Uri.parse(
-          "https://script.google.com/macros/s/AKfycbwG-W8x3ojt3-h5F-2IsmfdfTTdGo-bJiYF9gtBfC80KWNc7Qfv3DlApShRwYanHZia4A/exec"),
-    );
-    dynamic jsonAppData = convert.jsonDecode(data.body);
-    final List<Meeting> appointmentData = [];
-    final Random random = Random();
-    for (dynamic data in jsonAppData) {
-      Meeting meetingData = Meeting(
-        eventName: data['subject'],
-        from: _convertDateFromString(data['starttime']),
-        to: _convertDateFromString(data['endtime']),
-        background: _colorCollection[random.nextInt(9)],
-      );
-      appointmentData.add(meetingData);
-    }
-    return appointmentData;
-  }
-
-```
-
 ## Calendar data loading
 
 Display the online data with the help of the FutureBuilder widget.
-
-```
-    child: FutureBuilder(
-        future: getDataFromGoogleSheet(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.data != null) {
-            return SafeArea(
-                child: Container(
-                child: SfCalendar(
-                    view: CalendarView.month,
-                    monthViewSettings: const MonthViewSettings(showAgenda: true),
-                    dataSource: MeetingDataSource(snapshot.data),
-                    initialDisplayDate: snapshot.data[0].from,
-                ),
-                ));
-        } else {
-            return Container(
-            child: const Center(
-                child: Text('Loading.....'),
-            ),
-            );
-        }
-        },
-    ),
-
-```
 
 ## Requirements to run the demo
 * [VS Code](https://code.visualstudio.com/download)
